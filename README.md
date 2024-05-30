@@ -1,0 +1,2 @@
+# Auto-Kaggle-Leveraging-Language-Models-for-Automated-Data-Science-Pipelines
+The "Auto-Kaggle" project aims to create an advanced and autonomous data science pipeline that utilizes Language Models (LLMs) such as ChatGPT to automatically solve Kaggle-like tasks on structured data, achieving competitive scores. The project involves developing a comprehensive pipeline capable of handling various stages of data science workflow
