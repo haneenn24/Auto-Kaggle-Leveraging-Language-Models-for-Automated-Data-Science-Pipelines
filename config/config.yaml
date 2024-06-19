@@ -1,0 +1,5 @@
+datasets:
+  customer_churn:
+    train_path: "data/raw/customer_churn_dataset-training-master.csv"
+    test_path: "data/raw/customer_churn_dataset-testing-master.csv"
+    target: "Churn"
