@@ -1,48 +1,65 @@
 import sys
 import os
-from unittest.mock import patch
-import time
-
-# Add src to the system path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
-
+import argparse
+import yaml
 from config_loader import load_config
-from llm_gpt import GPTModel
+from llm_gpt4 import GPT4Model
+from llm_gpt35 import GPT35Model
 from logging_config import setup_logging
 import logging
+from pipeline_manager import run_pipeline
+
+def get_available_options(config_path):
+    with open(config_path, 'r') as file:
+        config = yaml.safe_load(file)
+    available_models = ['gpt4', 'gpt3.5']
+    available_datasets = list(config['datasets'].keys())
+    return available_models, available_datasets
 
 def main():
+    # Setup argument parser
+    parser = argparse.ArgumentParser(description="Run Auto-Kaggle pipeline")
+    parser.add_argument('--config', type=str, required=True, help="Path to the configuration file")
+    parser.add_argument('--model', type=str, required=True, help="LLM model to use")
+    parser.add_argument('--dataset', type=str, required=True, help="Dataset to use")
+    
+    # Parse known arguments to extract config path
+    args, _ = parser.parse_known_args()
+    
+    # Get available options from config
+    available_models, available_datasets = get_available_options(args.config)
+    
+    # Update argument parser with choices
+    parser.add_argument('--model', type=str, required=True, choices=available_models, help="LLM model to use")
+    parser.add_argument('--dataset', type=str, required=True, choices=available_datasets, help="Dataset to use")
+    
+    # Parse all arguments
+    args = parser.parse_args()
+
     setup_logging()
     
     # Load configuration
-    config = load_config("config/config.yaml")
+    config = load_config(args.config)
     
     # Initialize LLM
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise ValueError("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
-    llm = GPTModel(api_key)
     
-    # Process each dataset
-    for dataset_name, dataset_config in config['datasets'].items():
-        logging.info(f"Processing dataset: {dataset_name}")
-        
-        if 'train_path' in dataset_config and 'test_path' in dataset_config:
-            dataset_paths = (dataset_config['train_path'], dataset_config['test_path'])
-        else:
-            dataset_paths = dataset_config['path']
-        
-        try:
-            # Generate code
-            generated_code = llm.generate_code(dataset_paths)
-            logging.info(f"Generated code for {dataset_name}:\n{generated_code}")
-            
-        except Exception as e:
-            if "insufficient_quota" in str(e):
-                logging.error(f"Quota exceeded: {e}")
-                time.sleep(60)  # Wait for some time before retrying
-            else:
-                logging.error(f"Error processing dataset {dataset_name}: {e}")
+    if args.model == 'gpt_4':
+        llm = GPT4Model(api_key)
+    elif args.model == 'gpt_3.5':
+        llm = GPT35Model(api_key)
+    else:
+        raise ValueError("Invalid LLM model specified")
+
+    # Extract dataset configuration
+    if args.dataset not in config['datasets']:
+        raise ValueError(f"Dataset {args.dataset} not found in configuration.")
+    dataset_config = config['datasets'][args.dataset]
+
+    # Run the pipeline
+    run_pipeline(dataset_config, llm)
 
 if __name__ == "__main__":
     main()

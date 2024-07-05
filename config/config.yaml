@@ -1,5 +1,29 @@
 datasets:
-  customer_churn:
-    train_path: "data/raw/customer_churn_dataset-training-master.csv"
-    test_path: "data/raw/customer_churn_dataset-testing-master.csv"
-    target: "Churn"
+  Customer_Churn:
+    dataset_path: "data/customer_churn.csv"
+    task_type: "classification"
+    target: "Churn: {0,1}"
+    metric: "accuracy"
+    available_solution_url: "https://www.kaggle.com/code/sibelius5/customer-churn-prediction-95-accuracy/notebook"
+    performance_threshold: 0.95
+  Cost of Media Campaigns:
+    dataset_path: "data/media_prediction_and_its_cost.csv"
+    task_type: "regression"
+    target: "cost: float"
+    metric: "Mean Squared Error"
+    available_solution_url: "https://www.kaggle.com/code/nascimentoph/predicting-the-cost-of-media-campaigns/notebook"
+    performance_threshold: 0.73
+  Credit Card Fraud Detection:
+    dataset_path: "data/creditcard.csv"
+    task_type: "anomaly detection"
+    target: "fraud detection {0,1}"
+    metric: "ROC AUC"
+    available_solution_url: "https://www.kaggle.com/code/gpreda/credit-card-fraud-detection-predictive-models/notebook"
+    performance_threshold: 0.85
+  Retail Sales Forecasting:
+    dataset_path: "data/retail_sales.csv"
+    task_type: "forecasting"
+    target: "sales: float"
+    metric: "RMSE"
+    available_solution_url: "https://www.kaggle.com/code/ramyasubramanya/retail-sales-forecasting/notebook"
+    performance_threshold: 0.17
