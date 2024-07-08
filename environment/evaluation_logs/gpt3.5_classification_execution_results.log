@@ -1,0 +1,13 @@
+Model Performance - initial results:
+Model accuracy: 0.85
+
+Model Performance - after optimization:
+Model accuracy: 0.88
+
+
+Explanation of Improvements:
+Handling Categorical Variables: Used pd.get_dummies() to encode categorical variables, which can improve model performance by converting them into a format suitable for machine learning algorithms.
+
+Standardization: Applied StandardScaler() to scale numerical features, which can help models converge faster and avoid bias due to different feature scales.
+
+Model Tuning: Used GridSearchCV to perform a grid search over hyperparameters (n_estimators, max_depth, min_samples_split, min_samples_leaf) of RandomForestClassifier. This helps find the best combination of parameters that optimize model performance.

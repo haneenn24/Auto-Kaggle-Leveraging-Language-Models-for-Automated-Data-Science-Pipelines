@@ -102,5 +102,5 @@ def validate_script(script):
     print(f"Validation completed. Check the log file: {log_file}")
 
 if __name__ == "__main__":
-    script_to_validate = 'environment/validation_logs/input/generated_code_classification.py'
+    script_to_validate = 'generated_scripts/forecasting/gpt4_generated_code_forecasting.py'
     validate_script(script_to_validate)

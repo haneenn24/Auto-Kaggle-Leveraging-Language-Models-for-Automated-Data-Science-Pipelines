@@ -11,7 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 
 # Load the dataset
-file_path = '/mnt/data/customer_churn.csv'
+file_path = 'customer_churn.csv'
 customer_churn_df = pd.read_csv(file_path)
 # Display the first few rows of the dataset
 customer_churn_df.head()

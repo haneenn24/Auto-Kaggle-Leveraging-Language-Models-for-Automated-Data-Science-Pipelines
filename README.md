@@ -97,12 +97,62 @@ auto_kaggler_proj/
    - Experiment with different algorithms (e.g., RandomForest, XGBoost, SVM, etc.)
    - Use cross-validation to assess model performance
    - Implement an automatic hyperparameter tuning mechanism (e.g., Grid Search, Random Search, Bayesian Optimization)
-3. **Hyperparameter Tuning**:
+3. **Improve Performance (compared with benchmark results)**:
    - Perform hyperparameter tuning to find the best parameters for the chosen model
+   - LLM model asked to improve performance using a combination of these methods which can significantly enhance model performance and robustness.
+
+   3.1 **Feature Engineering**:
+      - **Create Interaction Features**: Combine features to capture interactions.
+      - **Polynomial Features**: Add polynomial terms to capture non-linear relationships.
+      - **Domain-Specific Features**: Create features based on domain knowledge.
+
+   3.2 **Handling Class Imbalance**:
+      - **Oversampling**: Use techniques like SMOTE to balance the classes.
+      - **Undersampling**: Reduce the number of samples in the majority class.
+      - **Class Weights**: Adjust the weights of the classes in the loss function.
+
+   3.3 **Hyperparameter Tuning**:
+      - **Grid Search**: Exhaustively search over a specified parameter grid.
+      - **Random Search**: Randomly sample parameters from a specified distribution.
+      - **Bayesian Optimization**: Use probabilistic models to find the optimal hyperparameters.
+
+   3.4 **Ensemble Methods**:
+      - **Bagging**: Combine multiple models trained on different subsets of the data (e.g., Random Forest).
+      - **Boosting**: Sequentially train models to correct the errors of previous models (e.g., XGBoost, AdaBoost).
+      - **Stacking**: Combine predictions from multiple models using a meta-model.
+
+   3.5 **Model Selection**:
+      - **Try Different Algorithms**: Experiment with different machine learning algorithms to find the best one for your data.
+      - **Model Complexity**: Adjust the complexity of the model (e.g., depth of decision trees, number of layers in neural networks).
+
+   3.6 **Data Preprocessing**:
+      - **Scaling/Normalization**: Scale numerical features to have a similar range.
+      - **Imputation**: Handle missing values using strategies like mean, median, or mode imputation.
+      - **Encoding**: Convert categorical features into numerical format (e.g., One-Hot Encoding, Label Encoding).
+
+   3.7 **Cross-Validation**:
+      - **K-Fold Cross-Validation**: Divide the data into k subsets and train/test the model k times.
+      - **Stratified Sampling**: Ensure that each fold has a similar distribution of classes.
+
+   3.8 **Regularization**:
+      - **L1/Lasso**: Adds a penalty for non-zero coefficients, encouraging sparsity.
+      - **L2/Ridge**: Adds a penalty for large coefficients, encouraging smaller coefficients.
+
+   3.9 **Early Stopping**:
+      - **Monitor Validation Performance**: Stop training when the performance on a validation set stops improving to prevent overfitting.
+
+   3.10 **Data Augmentation**:
+      - **Synthetic Data**: Generate synthetic data to increase the size and diversity of the training set.
+      - **Transformations**: Apply transformations (e.g., rotations, scaling) to create new training samples.
+
 4. **Model Evaluation**:
    - Evaluate models using appropriate metrics (accuracy, precision, recall, F1 score, ROC-AUC, etc.)
 5. **Iterative Improvement**:
    - Based on evaluation, iteratively improve preprocessing steps, feature engineering, model selection, and hyperparameter tuning
+
+6. **Comparison with Benchmarks**:
+   - Compare the model's performance with the benchmark solution found at the specified URL in the `config.yaml` file.
+   - Additionally, the LLM is instructed to find other benchmarks from Kaggle or other communities for a comprehensive performance evaluation.
 
 ## How to Run
 
@@ -128,10 +178,9 @@ auto_kaggler_proj/
 ### Main Script (`main.py`)
 The main script sets up the argument parser, loads the configuration, initializes the LLM, and runs the pipeline.
 
-
 ## Diagram
 
-![Diagram](diagram.png)
+![Diagram](diagram.pdf)
 
 ## Contact
 For any inquiries or issues, please feel free to contact me.

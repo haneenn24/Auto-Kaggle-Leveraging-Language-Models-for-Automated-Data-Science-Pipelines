@@ -1,14 +1,16 @@
 import openai
 import pandas as pd
 import os
+import yaml
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.impute import SimpleImputer
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
-from code_validator import validate_script, log_message
+from xgboost import XGBClassifier
+from imblearn.over_sampling import SMOTE
+from skopt import BayesSearchCV
 
 # Initialization
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -27,7 +29,7 @@ def send_prompt(prompt):
 # Function to execute generated code
 def execute_code(code, globals=None, locals=None):
     try:
-        exec(code, globals, locals)
+        exec(code, globals(), locals())
         return None
     except Exception as e:
         return str(e)
@@ -55,12 +57,22 @@ def generate_and_validate(prompt):
     
     validate_script("generated_code.py")
 
+# Read configuration from config.yaml
+with open('config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
+
+dataset_path = config['Customer_Churn']['dataset_path']
+task_type = config['Customer_Churn']['task_type']
+target = config['Customer_Churn']['target']
+metric = config['Customer_Churn']['metric']
+benchmark_solution_url = config['Customer_Churn']['benchmark_solution_url']
+performance_threshold = config['Customer_Churn']['performance_threshold']
+
 # Step 1: Load Data
-file_path = './data/customer_churn.csv'
 data_prompt = f"""
 You are an AI data scientist tasked with solving a customer churn prediction problem. 
 Load the data from the following path and provide basic analysis:
-{file_path}
+{dataset_path}
 """
 generate_and_validate(data_prompt)
 
@@ -73,20 +85,65 @@ generate_and_validate(analysis_prompt)
 
 # Step 3: Model Selection and Hyperparameter Tuning
 model_prompt = f"""
-Train a machine learning model to predict the Churn variable. 
+Train a machine learning model to predict the {target} variable. 
 Use cross-validation and perform hyperparameter tuning to optimize model performance. 
-Evaluate its performance using appropriate metrics.
+Evaluate its performance using appropriate metrics such as {metric}.
 """
 generate_and_validate(model_prompt)
 
 # Step 4: Performance Optimization 
 benchmark_prompt = f"""
-Compare the model's performance to benchmarks and suggest improvements.
+Compare the model's performance to the benchmark solution found at {benchmark_solution_url} and suggest improvements.
 """
 generate_and_validate(benchmark_prompt)
 
 # Step 5: Iterative Improvement
 improvement_prompt = f"""
-Iteratively improve the model's performance based on the comparison with benchmarks.
+    Iteratively improve the model's performance based on the comparison with the benchmark solution found at {benchmark_solution_url} and by finding additional benchmarks from Kaggle or other communities.
+    Here are some methods to improve model performance:
+    1. **Feature Engineering**:
+    - Create Interaction Features: Combine features to capture interactions.
+    - Polynomial Features: Add polynomial terms to capture non-linear relationships.
+    - Domain-Specific Features: Create features based on domain knowledge.
+
+    2. **Handling Class Imbalance**:
+    - Oversampling: Use techniques like SMOTE to balance the classes.
+    - Undersampling: Reduce the number of samples in the majority class.
+    - Class Weights: Adjust the weights of the classes in the loss function.
+
+    3. **Hyperparameter Tuning**:
+    - Grid Search: Exhaustively search over a specified parameter grid.
+    - Random Search: Randomly sample parameters from a specified distribution.
+    - Bayesian Optimization: Use probabilistic models to find the optimal hyperparameters.
+
+    4. **Ensemble Methods**:
+    - Bagging: Combine multiple models trained on different subsets of the data (e.g., Random Forest).
+    - Boosting: Sequentially train models to correct the errors of previous models (e.g., XGBoost, AdaBoost).
+    - Stacking: Combine predictions from multiple models using a meta-model.
+
+    5. **Model Selection**:
+    - Try Different Algorithms: Experiment with different machine learning algorithms to find the best one for your data.
+    - Model Complexity: Adjust the complexity of the model (e.g., depth of decision trees, number of layers in neural networks).
+
+    6. **Data Preprocessing**:
+    - Scaling/Normalization: Scale numerical features to have a similar range.
+    - Imputation: Handle missing values using strategies like mean, median, or mode imputation.
+    - Encoding: Convert categorical features into numerical format (e.g., One-Hot Encoding, Label Encoding).
+
+    7. **Cross-Validation**:
+    - K-Fold Cross-Validation: Divide the data into k subsets and train/test the model k times.
+    - Stratified Sampling: Ensure that each fold has a similar distribution of classes.
+
+    8. **Regularization**:
+    - L1/Lasso: Adds a penalty for non-zero coefficients, encouraging sparsity.
+    - L2/Ridge: Adds a penalty for large coefficients, encouraging smaller coefficients.
+
+    9. **Early Stopping**:
+    - Monitor Validation Performance: Stop training when the performance on a validation set stops improving to prevent overfitting.
+
+    10. **Data Augmentation**:
+        - Synthetic Data: Generate synthetic data to increase the size and diversity of the training set.
+        - Transformations: Apply transformations (e.g., rotations, scaling) to create new training samples.
 """
+
 generate_and_validate(improvement_prompt)
