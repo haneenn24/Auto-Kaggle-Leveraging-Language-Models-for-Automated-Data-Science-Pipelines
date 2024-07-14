@@ -16,43 +16,6 @@ The research project focuses on using LLMs to perform data scientist tasks auton
 - Ensuring minimal human intervention and high adaptability.
 - Proper evaluation to avoid overfitting to specific datasets.
 
-## Code Structure
-
-auto_kaggler_proj/
-├── automl_models_for_comparison/
-├── config/
-├── data/
-├── environment/
-├── evaluation_logs/
-├── validation_logs/
-│   ├── input/
-│   │   └── generated_code_<task_type>.py
-│   └── output/
-│       └── validation_log_<task_type>.py
-├── generated_scripts/
-│   ├── anomaly_detection/
-│   ├── classification/
-│   ├── forecasting/
-│   ├── generated_code_examples/
-│   └── regression/
-├── src/
-│   ├── __pycache__/
-│   ├── __init__.py
-│   ├── auto_fix_script.py
-│   ├── code_execution.py
-│   ├── code_validator.py
-│   ├── config_loader.py
-│   ├── list_models.py
-│   ├── llm_base.py
-│   ├── llm_gpt4.py
-│   ├── llm_gpt35.py
-│   ├── logging_config.py
-│   ├── pipeline_manager.py
-├── __init__.py
-├── diagram.png
-├── main.py
-├── README.md
-└── requirements.txt
 
 ## Key Components
 
