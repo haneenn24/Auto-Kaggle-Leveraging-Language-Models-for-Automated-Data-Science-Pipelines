@@ -19,28 +19,22 @@ The research project focuses on using LLMs to perform data scientist tasks auton
 ## Code Structure
 
 auto_kaggler_proj/
-│
 ├── automl_models_for_comparison/
-│
 ├── config/
-│
 ├── data/
-│
 ├── environment/
-│   ├── evaluation_logs/
-│   └── validation_logs/
-│       ├── input/
-│       │   └── generated_code_<task_type>.py
-│       └── output/
-│           └── validation_log_<task_type>.py
-│
+├── evaluation_logs/
+├── validation_logs/
+│   ├── input/
+│   │   └── generated_code_<task_type>.py
+│   └── output/
+│       └── validation_log_<task_type>.py
 ├── generated_scripts/
 │   ├── anomaly_detection/
 │   ├── classification/
 │   ├── forecasting/
 │   ├── generated_code_examples/
 │   └── regression/
-│
 ├── src/
 │   ├── __pycache__/
 │   ├── __init__.py
@@ -55,10 +49,11 @@ auto_kaggler_proj/
 │   ├── logging_config.py
 │   ├── pipeline_manager.py
 ├── __init__.py
-|── diagram.png
-|── main.py
-|── README.md
+├── diagram.png
+├── main.py
+├── README.md
 └── requirements.txt
+
 
 ## Key Components
 
