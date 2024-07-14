@@ -179,7 +179,7 @@ The main script sets up the argument parser, loads the configuration, initialize
 
 ## Diagram
 
-[Diagram](overview.pdf)
+[Overview](overview.pdf)
 
 ## Contact
 For any inquiries or issues, please feel free to contact me.
