@@ -30,9 +30,9 @@ auto_kaggler_proj/
 │   ├── evaluation_logs/
 │   └── validation_logs/
 │       ├── input/
-│       │   └── generated_code_classification.py
+│       │   └── generated_code_<task_type>.py
 │       └── output/
-│           └── validation_log_classification.py
+│           └── validation_log_<task_type>.py
 │
 ├── generated_scripts/
 │   ├── anomaly_detection/
@@ -54,11 +54,10 @@ auto_kaggler_proj/
 │   ├── llm_gpt35.py
 │   ├── logging_config.py
 │   ├── pipeline_manager.py
-│   ├── __init__.py
-│   ├── diagram.png
-│   ├── main.py
-│   └── README.md
-│
+├── __init__.py
+|── diagram.png
+|── main.py
+|── README.md
 └── requirements.txt
 
 ## Key Components
