@@ -54,7 +54,6 @@ auto_kaggler_proj/
 ├── README.md
 └── requirements.txt
 
-
 ## Key Components
 
 ### Pipeline Manager (`pipeline_manager.py`)
