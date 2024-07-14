@@ -12,12 +12,14 @@ from xgboost import XGBClassifier
 from imblearn.over_sampling import SMOTE
 from skopt import BayesSearchCV
 
-# Initialization
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Function to initialize OpenAI API key
+def initialize_openai_api(api_key):
+    openai.api_key = api_key
 
-def send_prompt(prompt):
+# Function to send a prompt to OpenAI and receive a response
+def send_prompt(prompt, llm):
     response = openai.Completion.create(
-        engine="text-davinci-003",
+        engine=llm,
         prompt=prompt,
         max_tokens=1500,
         n=1,
@@ -35,8 +37,8 @@ def execute_code(code, globals=None, locals=None):
         return str(e)
 
 # Function to handle code generation, validation, and correction
-def generate_and_validate(prompt):
-    code = send_prompt(prompt)
+def generate_and_validate(prompt, llm):
+    code = send_prompt(prompt, llm)
     print("Generated Code:\n", code)
     error = execute_code(code, globals(), locals())
     
@@ -48,7 +50,7 @@ def generate_and_validate(prompt):
         The error message was: {error}
         Please correct the code and provide a new version.
         """
-        code = send_prompt(debug_prompt)
+        code = send_prompt(debug_prompt, llm)
         print("Corrected Code:\n", code)
         error = execute_code(code, globals(), locals())
     
@@ -57,48 +59,57 @@ def generate_and_validate(prompt):
     
     validate_script("generated_code.py")
 
-# Read configuration from config.yaml
-with open('config.yaml', 'r') as file:
-    config = yaml.safe_load(file)
+def log_message(logfile, category, message, error=""):
+    with open(logfile, "a") as file:
+        file.write(f"{category}: {message}\n")
+        if error:
+            file.write(f"Error: {error}\n")
 
-dataset_path = config['Customer_Churn']['dataset_path']
-task_type = config['Customer_Churn']['task_type']
-target = config['Customer_Churn']['target']
-metric = config['Customer_Churn']['metric']
-benchmark_solution_url = config['Customer_Churn']['benchmark_solution_url']
-performance_threshold = config['Customer_Churn']['performance_threshold']
+# Function to validate the script
+def validate_script(script_path):
+    try:
+        with open(script_path, "r") as file:
+            code = file.read()
+        exec(code, globals(), locals())
+    except Exception as e:
+        log_message("validation_log.txt", "Validation Error", "Script validation failed.", str(e))
 
 # Step 1: Load Data
-data_prompt = f"""
-You are an AI data scientist tasked with solving a customer churn prediction problem. 
-Load the data from the following path and provide basic analysis:
-{dataset_path}
-"""
-generate_and_validate(data_prompt)
+def load_data(dataset_path, llm):
+    data_prompt = f"""
+    You are an AI data scientist tasked with solving a customer churn prediction problem. 
+    Load the data from the following path and provide basic analysis:
+    {dataset_path}
+    """
+    generate_and_validate(data_prompt, llm)
 
 # Step 2: Data Analysis and Preprocessing
-analysis_prompt = f"""
-Analyze the dataset and preprocess it for machine learning. 
-Handle missing values, convert categorical variables, and create any necessary features.
-"""
-generate_and_validate(analysis_prompt)
+def analyze_and_preprocess_data(llm):
+    analysis_prompt = f"""
+    Analyze the dataset and preprocess it for machine learning. 
+    Handle missing values, convert categorical variables, and create any necessary features.
+    """
+    generate_and_validate(analysis_prompt, llm)
 
 # Step 3: Model Selection and Hyperparameter Tuning
-model_prompt = f"""
-Train a machine learning model to predict the {target} variable. 
-Use cross-validation and perform hyperparameter tuning to optimize model performance. 
-Evaluate its performance using appropriate metrics such as {metric}.
-"""
-generate_and_validate(model_prompt)
+def model_selection_and_tuning(target, metric, llm):
+    model_prompt = f"""
+    Train a machine learning model to predict the {target} variable. 
+    Use cross-validation and perform hyperparameter tuning to optimize model performance. 
+    Evaluate its performance using appropriate metrics such as {metric}.
+    """
+    generate_and_validate(model_prompt, llm)
 
 # Step 4: Performance Optimization 
-benchmark_prompt = f"""
-Compare the model's performance to the benchmark solution found at {benchmark_solution_url} and suggest improvements.
-"""
-generate_and_validate(benchmark_prompt)
+def performance_optimization(benchmark_solution_url, llm):
+    benchmark_prompt = f"""
+    Compare the model's performance to the benchmark solution found at {benchmark_solution_url} and suggest improvements.
+    """
+    generate_and_validate(benchmark_prompt, llm)
 
 # Step 5: Iterative Improvement
-improvement_prompt = f"""
+def iterative_improvement(benchmark_solution_url, llm):
+    improvement_prompt = f"""
     Iteratively improve the model's performance based on the comparison with the benchmark solution found at {benchmark_solution_url} and by finding additional benchmarks from Kaggle or other communities.
     Here are some methods to improve model performance:
     1. **Feature Engineering**:
@@ -142,8 +153,33 @@ improvement_prompt = f"""
     - Monitor Validation Performance: Stop training when the performance on a validation set stops improving to prevent overfitting.
 
     10. **Data Augmentation**:
-        - Synthetic Data: Generate synthetic data to increase the size and diversity of the training set.
-        - Transformations: Apply transformations (e.g., rotations, scaling) to create new training samples.
-"""
+    - Synthetic Data: Generate synthetic data to increase the size and diversity of the training set.
+    - Transformations: Apply transformations (e.g., rotations, scaling) to create new training samples.
+    """
+    generate_and_validate(improvement_prompt, llm)
 
-generate_and_validate(improvement_prompt)
+# Main function to run the entire pipeline
+def run_pipeline(dataset_config, llm):
+    with open(dataset_config, 'r') as file:
+        config = yaml.safe_load(file)
+
+    dataset_path = config['Customer_Churn']['dataset_path']
+    target = config['Customer_Churn']['target']
+    metric = config['Customer_Churn']['metric']
+    benchmark_solution_url = config['Customer_Churn']['benchmark_solution_url']
+
+    load_data(dataset_path, llm)
+    analyze_and_preprocess_data(llm)
+    model_selection_and_tuning(target, metric, llm)
+    performance_optimization(benchmark_solution_url, llm)
+    iterative_improvement(benchmark_solution_url, llm)
+
+# Call the main function to run the pipeline
+if __name__ == "__main__":
+    api_key = os.getenv("OPENAI_API_KEY")
+    initialize_openai_api(api_key)
+    
+    dataset_config = 'config.yaml'  # or any other path to the config file
+    llm = "text-davinci-003"  # or any other specified language model
+    
+    run_pipeline(dataset_config, llm)
